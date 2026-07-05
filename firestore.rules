@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Admin checking function
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Helper to check if database has not been seeded yet
+    function isUnseeded() {
+      return !exists(/databases/$(database)/documents/portfolio_settings/settings);
+    }
+
+    // Portfolio Settings, Projects, Skills, Services are read-only for public, write-only for admins (except during bootstrap)
+    match /portfolio_settings/{document} {
+      allow read: if true;
+      allow write: if isAdmin() || isUnseeded();
+    }
+    
+    match /projects/{document} {
+      allow read: if true;
+      allow write: if isAdmin() || isUnseeded();
+    }
+    
+    match /skills/{document} {
+      allow read: if true;
+      allow write: if isAdmin() || isUnseeded();
+    }
+    
+    match /services/{document} {
+      allow read: if true;
+      allow write: if isAdmin() || isUnseeded();
+    }
+
+    // Contact Messages can be submitted by anyone, but read/managed only by admins
+    match /messages/{document} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

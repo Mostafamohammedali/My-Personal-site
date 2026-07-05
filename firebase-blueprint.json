@@ -1,0 +1,107 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "A portfolio project entity",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "image": { "type": "string" },
+        "technologies": { "type": "array" },
+        "features": { "type": "array" },
+        "challenges": { "type": "string" },
+        "liveUrl": { "type": "string" },
+        "codeUrl": { "type": "string" },
+        "featured": { "type": "boolean" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["title", "description", "category", "image", "technologies", "features", "liveUrl", "codeUrl", "featured"]
+    },
+    "Skill": {
+      "title": "Skill",
+      "description": "A technical skill or competency",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "level": { "type": "number" }
+      },
+      "required": ["name", "category", "level"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "A provided professional service offer",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "features": { "type": "array" }
+      },
+      "required": ["title", "description", "features"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "An inquiry message from the contact form",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "subject": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["unread", "read"] },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["name", "email", "subject", "message", "status", "createdAt"]
+    },
+    "PortfolioSettings": {
+      "title": "PortfolioSettings",
+      "description": "Global administrator biography, stats, and contact details",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "title": { "type": "string" },
+        "bio": { "type": "string" },
+        "intro": { "type": "string" },
+        "specialties": { "type": "array" },
+        "country": { "type": "string" },
+        "location": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "githubUrl": { "type": "string" },
+        "linkedinUrl": { "type": "string" },
+        "twitterUrl": { "type": "string" },
+        "resumeUrl": { "type": "string" },
+        "yearsOfExperience": { "type": "number" },
+        "completedProjects": { "type": "number" },
+        "masteredTechs": { "type": "number" },
+        "careerGoals": { "type": "string" }
+      },
+      "required": ["name", "title", "bio", "intro", "specialties", "country", "location", "phone", "email", "githubUrl", "linkedinUrl", "twitterUrl", "resumeUrl", "yearsOfExperience", "completedProjects", "masteredTechs", "careerGoals"]
+    }
+  },
+  "firestore": {
+    "/portfolio_settings/{settingsId}": {
+      "schema": { "$ref": "#/entities/PortfolioSettings" },
+      "description": "Global metadata for site owner"
+    },
+    "/projects/{projectId}": {
+      "schema": { "$ref": "#/entities/Project" },
+      "description": "Showcased portfolio projects"
+    },
+    "/skills/{skillId}": {
+      "schema": { "$ref": "#/entities/Skill" },
+      "description": "Proficiency charts and slider values"
+    },
+    "/services/{serviceId}": {
+      "schema": { "$ref": "#/entities/Service" },
+      "description": "Offered architectural and developer consulting packages"
+    },
+    "/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Secured mailbox for incoming client inquiries"
+    }
+  }
+}
