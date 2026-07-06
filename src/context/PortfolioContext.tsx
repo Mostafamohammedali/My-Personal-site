@@ -78,31 +78,31 @@ export const PortfolioProvider: React.FC<{ children: ReactNode }> = ({ children 
       // Run Database Seeder
       await seedDatabaseIfEmpty();
 
-      // Get settings
+      // Fetch all collections concurrently to maximize speed and remove query-waterfall delays
       const settingsDocRef = doc(db, 'portfolio_settings', 'settings');
-      const settingsSnap = await getDoc(settingsDocRef);
+      const [settingsSnap, projectsSnap, skillsSnap, servicesSnap] = await Promise.all([
+        getDoc(settingsDocRef),
+        getDocs(query(collection(db, 'projects'), orderBy('createdAt', 'desc'))),
+        getDocs(collection(db, 'skills')),
+        getDocs(collection(db, 'services'))
+      ]);
+
       if (settingsSnap.exists()) {
         setSettings(settingsSnap.data() as PortfolioSettings);
       }
 
-      // Get projects
-      const projectsSnap = await getDocs(query(collection(db, 'projects'), orderBy('createdAt', 'desc')));
       const projectsList: Project[] = [];
       projectsSnap.forEach((doc) => {
         projectsList.push({ id: doc.id, ...doc.data() } as Project);
       });
       setProjects(projectsList);
 
-      // Get skills
-      const skillsSnap = await getDocs(collection(db, 'skills'));
       const skillsList: Skill[] = [];
       skillsSnap.forEach((doc) => {
         skillsList.push({ id: doc.id, ...doc.data() } as Skill);
       });
       setSkills(skillsList);
 
-      // Get services
-      const servicesSnap = await getDocs(collection(db, 'services'));
       const servicesList: Service[] = [];
       servicesSnap.forEach((doc) => {
         servicesList.push({ id: doc.id, ...doc.data() } as Service);

@@ -123,6 +123,11 @@ const defaultProjects: Omit<Project, 'id'>[] = [
 
 export async function seedDatabaseIfEmpty() {
   try {
+    // Quick session check to bypass heavy checks on subsequent reloads/visits in the same session
+    if (typeof window !== 'undefined' && sessionStorage.getItem('portfolio_seeded_checked') === 'true') {
+      return;
+    }
+
     // Check settings
     const settingsRef = collection(db, 'portfolio_settings');
     const settingsSnap = await getDocs(query(settingsRef, limit(1)));
@@ -181,6 +186,11 @@ export async function seedDatabaseIfEmpty() {
       console.log('Database seeded successfully with Mustafa Mohammed\'s CV data!');
     } else {
       console.log('Database already populated. Skipping seed.');
+    }
+    
+    // Successfully checked/seeded, set session flag to skip next times
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('portfolio_seeded_checked', 'true');
     }
   } catch (error) {
     console.error('Error seeding database:', error);

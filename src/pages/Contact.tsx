@@ -11,7 +11,6 @@ import {
   Send, 
   Loader2, 
   CheckCircle,
-  Network
 } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
@@ -278,50 +277,6 @@ export const Contact: React.FC = () => {
                   <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 border border-white/10 rounded-lg hover:text-[#38BDF8] hover:border-[#38BDF8]/50 transition-colors">
                     <Twitter className="w-4 h-4" />
                   </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Interactive Map/Coordinate Display */}
-            <div className="p-8 glass-panel rounded-2xl flex flex-col gap-4 text-left border border-white/5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-display font-bold text-white tracking-tight flex items-center gap-2">
-                  <Network className="w-5 h-5 text-[#38BDF8]" />
-                  <span>Operational Vector Map</span>
-                </h3>
-                <div className="text-[9px] font-mono text-[#38BDF8] bg-white/5 px-2.5 py-1 rounded border border-white/10 uppercase tracking-widest font-bold animate-pulse">
-                  Active Node
-                </div>
-              </div>
-
-              {/* SVG Visual Map representing San Francisco Node */}
-              <div className="h-56 bg-[#030912] rounded-xl border border-white/10 overflow-hidden relative flex items-center justify-center p-4 shadow-inner">
-                <svg viewBox="0 0 400 200" className="w-full h-full text-white/5">
-                  <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(255,255,255,0.01)" strokeWidth="1" />
-                  <line x1="200" y1="0" x2="200" y2="200" stroke="rgba(255,255,255,0.01)" strokeWidth="1" />
-                  
-                  <circle cx="100" cy="80" r="2.5" fill="rgba(255,255,255,0.08)" />
-                  <circle cx="150" cy="140" r="2" fill="rgba(255,255,255,0.05)" />
-                  <circle cx="280" cy="70" r="3" fill="rgba(255,255,255,0.1)" />
-                  <circle cx="340" cy="110" r="2" fill="rgba(255,255,255,0.05)" />
-                  <circle cx="70" cy="120" r="2.5" fill="rgba(255,255,255,0.08)" />
-
-                  <circle cx="200" cy="100" r="75" fill="none" stroke="rgba(56,189,248, 0.03)" strokeWidth="1" />
-                  <circle cx="200" cy="100" r="45" fill="none" stroke="rgba(56,189,248, 0.05)" strokeWidth="1" />
-
-                  <path d="M70 120 Q 135 110 200 100" stroke="rgba(56,189,248, 0.12)" strokeWidth="1" strokeDasharray="3 3" fill="none" />
-                  <path d="M100 80 Q 150 90 200 100" stroke="rgba(56,189,248, 0.12)" strokeWidth="1" strokeDasharray="3 3" fill="none" />
-                  <path d="M280 70 Q 240 85 200 100" stroke="rgba(56,189,248, 0.12)" strokeWidth="1" strokeDasharray="3 3" fill="none" />
-
-                  <circle cx="200" cy="100" r="5" fill="#38BDF8" className="animate-pulse" />
-                  <circle cx="200" cy="100" r="15" fill="none" stroke="#38BDF8" strokeWidth="1" className="animate-ping" style={{ animationDuration: '3.5s' }} />
-                </svg>
-
-                {/* Coordinates overlay box */}
-                <div className="absolute bottom-4 left-4 p-3 bg-[#050B14]/90 backdrop-blur-md border border-white/10 rounded-lg text-[10px] font-mono text-white/50 flex flex-col gap-1 shadow-sm">
-                  <span className="text-white font-bold">COORDS: STATION_SF</span>
-                  <span>LAT: {locationCoords.lat}</span>
-                  <span>LNG: {locationCoords.lng}</span>
                 </div>
               </div>
             </div>

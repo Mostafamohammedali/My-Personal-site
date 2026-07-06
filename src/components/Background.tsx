@@ -73,7 +73,8 @@ export const Background: React.FC = () => {
 
     // Initialize Fiber Optic Strands to match the beautiful video
     const fibers: Fiber[] = [];
-    const fiberCount = 40;
+    const isMobile = window.innerWidth < 768;
+    const fiberCount = isMobile ? 12 : 22; // Half the count for massive performance gain
 
     // Helper to generate a random blue shade matching the video
     const getRandomBlue = (opacity: number) => {
@@ -91,25 +92,25 @@ export const Background: React.FC = () => {
       const startX = (i / fiberCount) * window.innerWidth * 1.2 - (window.innerWidth * 0.1);
       
       const particlesList = [];
-      const particleCount = Math.floor(Math.random() * 2) + 1; // 1-2 glowing light pulses per fiber
+      const particleCount = isMobile ? 1 : (Math.random() > 0.5 ? 2 : 1); // Fewer glowing light pulses per fiber
       for (let p = 0; p < particleCount; p++) {
         particlesList.push({
           y: Math.random() * window.innerHeight,
-          speed: Math.random() * 1.2 + 0.6,
-          size: Math.random() * 2.2 + 1.2,
+          speed: Math.random() * 1.0 + 0.5,
+          size: Math.random() * 2.0 + 1.0,
           alpha: Math.random() * 0.5 + 0.5
         });
       }
 
       fibers.push({
         startX,
-        amplitude: Math.random() * 45 + 15,
-        frequency: Math.random() * 0.003 + 0.0015,
+        amplitude: Math.random() * 35 + 15,
+        frequency: Math.random() * 0.0025 + 0.0015,
         phase: Math.random() * Math.PI * 2,
-        phaseSpeed: Math.random() * 0.015 + 0.005,
-        curvature: (Math.random() * 180 + 80) * (Math.random() > 0.5 ? 1 : -1), // Curved sweeping paths
-        thickness: Math.random() * 1.5 + 0.5,
-        color: getRandomBlue(Math.random() * 0.15 + 0.08),
+        phaseSpeed: Math.random() * 0.012 + 0.004,
+        curvature: (Math.random() * 150 + 60) * (Math.random() > 0.5 ? 1 : -1), // Curved sweeping paths
+        thickness: Math.random() * 1.2 + 0.5,
+        color: getRandomBlue(Math.random() * 0.12 + 0.08),
         glowColor: getRandomBlue(1),
         particles: particlesList
       });
@@ -117,15 +118,15 @@ export const Background: React.FC = () => {
 
     // Ambient floating light bokeh circles
     const ambientParticles: AmbientParticle[] = [];
-    const ambientCount = 35;
+    const ambientCount = isMobile ? 10 : 20; // Lower count for better performance
     for (let i = 0; i < ambientCount; i++) {
       ambientParticles.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        size: Math.random() * 4 + 1.5,
-        speedY: -(Math.random() * 0.4 + 0.15), // drift upwards
-        speedX: (Math.random() - 0.5) * 0.15,
-        alpha: Math.random() * 0.4 + 0.1,
+        size: Math.random() * 3 + 1.5,
+        speedY: -(Math.random() * 0.3 + 0.1), // drift upwards
+        speedX: (Math.random() - 0.5) * 0.1,
+        alpha: Math.random() * 0.3 + 0.1,
         color: getRandomBlue(1)
       });
     }
@@ -190,7 +191,8 @@ export const Background: React.FC = () => {
         ctx.strokeStyle = f.color;
 
         // Draw curved lines by plotting points vertically
-        const step = 15;
+        // Increased step to 45 for over 3x faster point rendering
+        const step = 45;
         let first = true;
 
         for (let y = height + 10; y >= -10; y -= step) {
@@ -203,14 +205,16 @@ export const Background: React.FC = () => {
           // Sweeping natural curve path
           xOffset += Math.sin(progress * Math.PI) * f.curvature;
 
-          // Add a tiny bit of magnetic mouse attraction to the fibers
+          // Add a tiny bit of magnetic mouse attraction to the fibers (highly optimized)
           if (mouse.x > -500 && mouse.y > -500) {
             const currentX = f.startX + xOffset;
             const dx = mouse.x - currentX;
             const dy = mouse.y - y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 200) {
-              const force = (200 - dist) / 200 * 20; // pull up to 20px
+            const distSq = dx * dx + dy * dy;
+            // Only compute square root if within influence circle
+            if (distSq < 40000) { // 200px * 200px
+              const dist = Math.sqrt(distSq);
+              const force = ((200 - dist) / 200) * 20; // pull up to 20px
               xOffset += (dx / dist) * force;
             }
           }
@@ -233,7 +237,7 @@ export const Background: React.FC = () => {
           // Reset when reaching top
           if (p.y < -10) {
             p.y = height + 10;
-            p.speed = Math.random() * 1.2 + 0.6;
+            p.speed = Math.random() * 1.0 + 0.5;
           }
 
           // Compute exact X coordinate on the waving line at the current Y
@@ -241,37 +245,43 @@ export const Background: React.FC = () => {
           let pXOffset = Math.sin(p.y * f.frequency + f.phase) * f.amplitude;
           pXOffset += Math.sin(progress * Math.PI) * f.curvature;
 
-          // Mouse influence at particle coordinate
+          // Mouse influence at particle coordinate (highly optimized)
           if (mouse.x > -500 && mouse.y > -500) {
             const currentX = f.startX + pXOffset;
             const dx = mouse.x - currentX;
             const dy = mouse.y - p.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 200) {
-              const force = (200 - dist) / 200 * 20;
+            const distSq = dx * dx + dy * dy;
+            if (distSq < 40000) { // 200px * 200px
+              const dist = Math.sqrt(distSq);
+              const force = ((200 - dist) / 200) * 20;
               pXOffset += (dx / dist) * force;
             }
           }
 
           const particleX = f.startX + pXOffset;
 
-          // Glowing effect for fiber optic tips
+          // Fast high-performance glow effect using concentric circles instead of expensive shadowBlur
           ctx.save();
-          ctx.beginPath();
-          ctx.arc(particleX, p.y, p.size, 0, Math.PI * 2);
           
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = f.glowColor;
-          ctx.fillStyle = '#ffffff'; // White center for extreme brightness
-          ctx.globalAlpha = p.alpha;
+          // 1. Extreme glow outer ring
+          ctx.beginPath();
+          ctx.arc(particleX, p.y, p.size * 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = f.glowColor;
+          ctx.globalAlpha = p.alpha * 0.12;
           ctx.fill();
-          
-          // Outer glow ring
+
+          // 2. Medium glow ring
           ctx.beginPath();
-          ctx.arc(particleX, p.y, p.size * 2, 0, Math.PI * 2);
-          ctx.shadowBlur = 0; // disable shadow for clean performance
+          ctx.arc(particleX, p.y, p.size * 2.0, 0, Math.PI * 2);
           ctx.fillStyle = f.glowColor;
           ctx.globalAlpha = p.alpha * 0.35;
+          ctx.fill();
+
+          // 3. Bright white core
+          ctx.beginPath();
+          ctx.arc(particleX, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.globalAlpha = p.alpha;
           ctx.fill();
 
           ctx.restore();
