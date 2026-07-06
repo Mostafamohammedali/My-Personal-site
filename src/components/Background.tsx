@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { usePortfolio } from '../context/PortfolioContext';
 
 interface Fiber {
   startX: number;
@@ -29,6 +30,7 @@ interface AmbientParticle {
 }
 
 export const Background: React.FC = () => {
+  const { theme } = usePortfolio();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: -1000, y: -1000, targetX: -1000, targetY: -1000 });
@@ -138,11 +140,19 @@ export const Background: React.FC = () => {
       const width = rect.width;
       const height = rect.height;
 
+      const isLight = document.documentElement.classList.contains('light');
+
       // Clear with absolute pure black & dark royal gradient to match the cinematic video
       const bgGradient = ctx.createRadialGradient(width * 0.6, height * 0.7, 0, width * 0.5, height * 0.5, width * 0.9);
-      bgGradient.addColorStop(0, '#021026'); // Deep dark blue spotlight
-      bgGradient.addColorStop(0.5, '#010611'); // Darkest indigo
-      bgGradient.addColorStop(1, '#000205'); // Absolute deep black corners
+      if (isLight) {
+        bgGradient.addColorStop(0, '#FFFFFF'); // Pure white center
+        bgGradient.addColorStop(0.5, '#F8FAFC'); // Lightest slate
+        bgGradient.addColorStop(1, '#E2E8F0'); // Soft silver gray corners
+      } else {
+        bgGradient.addColorStop(0, '#021026'); // Deep dark blue spotlight
+        bgGradient.addColorStop(0.5, '#010611'); // Darkest indigo
+        bgGradient.addColorStop(1, '#000205'); // Absolute deep black corners
+      }
       ctx.fillStyle = bgGradient;
       ctx.fillRect(0, 0, width, height);
 
@@ -154,9 +164,15 @@ export const Background: React.FC = () => {
       // Render interactive mouse glow
       if (mouse.x > -500 && mouse.y > -500) {
         const cursorGlow = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 160);
-        cursorGlow.addColorStop(0, 'rgba(56, 189, 248, 0.05)');
-        cursorGlow.addColorStop(0.5, 'rgba(0, 132, 255, 0.02)');
-        cursorGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        if (isLight) {
+          cursorGlow.addColorStop(0, 'rgba(0, 132, 255, 0.06)');
+          cursorGlow.addColorStop(0.5, 'rgba(56, 189, 248, 0.02)');
+          cursorGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        } else {
+          cursorGlow.addColorStop(0, 'rgba(56, 189, 248, 0.05)');
+          cursorGlow.addColorStop(0.5, 'rgba(0, 132, 255, 0.02)');
+          cursorGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        }
         ctx.fillStyle = cursorGlow;
         ctx.fillRect(0, 0, width, height);
       }
@@ -305,13 +321,13 @@ export const Background: React.FC = () => {
     <div 
       id="interactive-background" 
       ref={containerRef} 
-      className="fixed inset-0 -z-50 w-full h-full overflow-hidden select-none bg-[#010611]"
+      className={`fixed inset-0 -z-50 w-full h-full overflow-hidden select-none transition-colors duration-500 ${theme === 'light' ? 'bg-[#F8FAFC]' : 'bg-[#010611]'}`}
     >
       {/* Background Interactive Fiber Optics Layer */}
       <canvas ref={canvasRef} className="absolute inset-0 block w-full h-full pointer-events-none" />
 
       {/* Cinematic Overlays to blend with the portfolio perfectly */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#010611] via-transparent to-[#010611]/80 pointer-events-none" />
+      <div className={`absolute inset-0 bg-gradient-to-t transition-colors duration-500 ${theme === 'light' ? 'from-[#F8FAFC] via-transparent to-[#F8FAFC]/80' : 'from-[#010611] via-transparent to-[#010611]/80'} pointer-events-none`} />
       <div className="absolute inset-0 bg-radial-gradient-vignette pointer-events-none" />
     </div>
   );

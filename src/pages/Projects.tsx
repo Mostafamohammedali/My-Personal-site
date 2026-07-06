@@ -12,7 +12,7 @@ import { usePortfolio } from '../context/PortfolioContext';
 import { Project } from '../types';
 
 export const Projects: React.FC = () => {
-  const { projects, loading } = usePortfolio();
+  const { projects, loading, theme } = usePortfolio();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeProjectModal, setActiveProjectModal] = useState<Project | null>(null);
@@ -107,10 +107,10 @@ export const Projects: React.FC = () => {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-1.5 rounded-full text-[10px] font-mono font-bold transition-all duration-300 uppercase cursor-pointer ${
+                className={`px-4 py-1.5 rounded-full text-[10px] font-mono font-bold transition-all duration-300 uppercase cursor-pointer border ${
                   selectedCategory === cat
-                    ? 'bg-white text-[#050B14]'
-                    : 'text-white/60 hover:text-white'
+                    ? 'bg-white/10 border-[#38BDF8]/30 text-white shadow-sm'
+                    : 'bg-transparent border-transparent text-white/60 hover:text-white'
                 }`}
               >
                 {cat}
@@ -202,14 +202,22 @@ export const Projects: React.FC = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96, y: 15 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="relative w-full max-w-4xl bg-[#050B14] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+                className={`relative w-full max-w-4xl border rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] transition-colors duration-300 ${
+                  theme === 'light' ? 'bg-white border-slate-900/10' : 'bg-[#050B14] border-white/10'
+                }`}
               >
                 {/* Modal Header Controls */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.02]">
-                  <span className="text-xs font-mono text-[#38BDF8] uppercase tracking-wider font-extrabold">Deployment Specifications</span>
+                <div className={`flex items-center justify-between px-6 py-4 border-b transition-colors duration-300 ${
+                  theme === 'light' ? 'border-slate-900/10 bg-slate-50' : 'border-white/10 bg-white/[0.02]'
+                }`}>
+                  <span className={`text-xs font-mono uppercase tracking-wider font-extrabold ${
+                    theme === 'light' ? 'text-[#0084FF]' : 'text-[#38BDF8]'
+                  }`}>Deployment Specifications</span>
                   <button
                     onClick={() => setActiveProjectModal(null)}
-                    className="p-1.5 text-white/50 hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                    className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                      theme === 'light' ? 'text-slate-500 hover:text-slate-900 hover:bg-slate-900/5' : 'text-white/50 hover:text-white hover:bg-white/5'
+                    }`}
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -219,24 +227,34 @@ export const Projects: React.FC = () => {
                 <div className="flex-1 overflow-y-auto text-left">
                   
                   {/* Hero Cover Image */}
-                  <div className="relative aspect-[21/9] bg-[#050B14] overflow-hidden">
+                  <div className={`relative aspect-[21/9] overflow-hidden ${
+                    theme === 'light' ? 'bg-slate-100' : 'bg-[#050B14]'
+                  }`}>
                     <img
                       src={activeProjectModal.image}
                       alt={activeProjectModal.title}
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover opacity-75"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#050B14] via-transparent to-transparent" />
+                    <div className={`absolute inset-0 bg-gradient-to-t via-transparent to-transparent ${
+                      theme === 'light' ? 'from-white' : 'from-[#050B14]'
+                    }`} />
                   </div>
 
                   <div className="p-6 md:p-10 flex flex-col gap-8">
                     {/* Title & Category & Links */}
-                    <div className="flex flex-col md:flex-row justify-between items-start gap-4 pb-6 border-b border-white/10">
+                    <div className={`flex flex-col md:flex-row justify-between items-start gap-4 pb-6 border-b transition-colors duration-300 ${
+                      theme === 'light' ? 'border-slate-900/10' : 'border-white/10'
+                    }`}>
                       <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-mono font-extrabold tracking-widest uppercase text-[#38BDF8]">
+                        <span className={`text-[10px] font-mono font-extrabold tracking-widest uppercase ${
+                          theme === 'light' ? 'text-[#0084FF]' : 'text-[#38BDF8]'
+                        }`}>
                           {activeProjectModal.category}
                         </span>
-                        <h2 className="text-2xl md:text-3xl font-display font-medium text-white tracking-tight leading-none">
+                        <h2 className={`text-2xl md:text-3xl font-display font-medium tracking-tight leading-none ${
+                          theme === 'light' ? 'text-slate-900' : 'text-white'
+                        }`}>
                           {activeProjectModal.title}
                         </h2>
                       </div>
@@ -247,7 +265,11 @@ export const Projects: React.FC = () => {
                           href={activeProjectModal.codeUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-4 py-2.5 bg-white/5 border border-white/10 hover:border-white/20 rounded-xl text-xs text-white/95 hover:text-white transition-colors flex items-center gap-1.5 font-mono font-extrabold"
+                          className={`px-4 py-2.5 rounded-xl text-xs transition-colors flex items-center gap-1.5 font-mono font-extrabold border ${
+                            theme === 'light' 
+                              ? 'bg-slate-900/5 border-slate-900/10 text-slate-700 hover:bg-slate-900/10 hover:text-slate-950' 
+                              : 'bg-white/5 border-white/10 hover:border-white/20 text-white/95 hover:text-white'
+                          }`}
                         >
                           <Github className="w-4 h-4" />
                           <span>Source Code</span>
@@ -256,7 +278,11 @@ export const Projects: React.FC = () => {
                           href={activeProjectModal.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-4 py-2.5 bg-[#38BDF8] hover:bg-[#38BDF8]/90 rounded-xl text-xs text-[#050B14] transition-all duration-300 flex items-center gap-1.5 font-mono font-extrabold shadow-md shadow-blue-500/10"
+                          className={`px-4 py-2.5 rounded-xl text-xs transition-all duration-300 flex items-center gap-1.5 font-mono font-extrabold shadow-md ${
+                            theme === 'light' 
+                              ? 'bg-[#0084FF] hover:bg-[#0084FF]/90 text-white shadow-blue-500/10' 
+                              : 'bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-[#050B14] shadow-blue-500/10'
+                          }`}
                         >
                           <ExternalLink className="w-4 h-4" />
                           <span>Live Demo</span>
@@ -270,20 +296,32 @@ export const Projects: React.FC = () => {
                       {/* Column Left (2/3): Description, Features, Challenges */}
                       <div className="md:col-span-2 flex flex-col gap-6 font-sans">
                         <div className="flex flex-col gap-3">
-                          <h4 className="text-xs font-mono text-white/40 uppercase tracking-widest font-bold">Project Overview</h4>
-                          <p className="text-white/80 text-sm leading-relaxed whitespace-pre-line font-medium">
+                          <h4 className={`text-xs font-mono uppercase tracking-widest font-bold ${
+                            theme === 'light' ? 'text-slate-400' : 'text-white/40'
+                          }`}>Project Overview</h4>
+                          <p className={`text-sm leading-relaxed whitespace-pre-line font-medium ${
+                            theme === 'light' ? 'text-slate-700' : 'text-white/80'
+                          }`}>
                             {activeProjectModal.description}
                           </p>
                         </div>
 
                         {/* Features */}
                         {activeProjectModal.features && activeProjectModal.features.length > 0 && (
-                          <div className="flex flex-col gap-3 border-t border-white/5 pt-6">
-                            <h4 className="text-xs font-mono text-white/40 uppercase tracking-widest font-bold">Key Features Implemented</h4>
+                          <div className={`flex flex-col gap-3 border-t pt-6 ${
+                            theme === 'light' ? 'border-slate-900/5' : 'border-white/5'
+                          }`}>
+                            <h4 className={`text-xs font-mono uppercase tracking-widest font-bold ${
+                              theme === 'light' ? 'text-slate-400' : 'text-white/40'
+                            }`}>Key Features Implemented</h4>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               {activeProjectModal.features.map((feat, fIdx) => (
-                                <div key={fIdx} className="flex items-start gap-2.5 text-xs text-white/70 font-medium">
-                                  <CheckCircle2 className="w-4 h-4 text-[#38BDF8] shrink-0 mt-0.5" />
+                                <div key={fIdx} className={`flex items-start gap-2.5 text-xs font-medium ${
+                                  theme === 'light' ? 'text-slate-600' : 'text-white/70'
+                                }`}>
+                                  <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${
+                                    theme === 'light' ? 'text-[#0084FF]' : 'text-[#38BDF8]'
+                                  }`} />
                                   <span>{feat}</span>
                                 </div>
                               ))}
@@ -293,9 +331,15 @@ export const Projects: React.FC = () => {
 
                         {/* Challenges */}
                         {activeProjectModal.challenges && (
-                          <div className="flex flex-col gap-3 border-t border-white/5 pt-6">
-                            <h4 className="text-xs font-mono text-amber-400 uppercase tracking-widest font-bold">Challenges Solved</h4>
-                            <p className="text-amber-200 text-xs leading-relaxed italic bg-amber-500/5 border border-amber-500/15 p-4 rounded-xl font-medium">
+                          <div className={`flex flex-col gap-3 border-t pt-6 ${
+                            theme === 'light' ? 'border-slate-900/5' : 'border-white/5'
+                          }`}>
+                            <h4 className="text-xs font-mono text-amber-500 uppercase tracking-widest font-bold">Challenges Solved</h4>
+                            <p className={`text-xs leading-relaxed italic p-4 rounded-xl font-medium ${
+                              theme === 'light' 
+                                ? 'bg-amber-500/[0.04] border border-amber-500/20 text-amber-800' 
+                                : 'bg-amber-500/5 border border-amber-500/15 text-amber-200'
+                            }`}>
                               "{activeProjectModal.challenges}"
                             </p>
                           </div>
@@ -304,31 +348,39 @@ export const Projects: React.FC = () => {
 
                       {/* Column Right (1/3): Metadata, Technologies */}
                       <div className="md:col-span-1 flex flex-col gap-6">
-                        <div className="p-6 bg-white/[0.02] border border-white/10 rounded-2xl flex flex-col gap-4 text-xs font-sans">
-                          <h4 className="font-mono text-[10px] text-white/40 uppercase tracking-widest pb-2 border-b border-white/5 font-extrabold">
+                        <div className={`p-6 rounded-2xl flex flex-col gap-4 text-xs font-sans border transition-colors duration-300 ${
+                          theme === 'light' ? 'bg-slate-900/[0.02] border-slate-900/10' : 'bg-white/[0.02] border-white/10'
+                        }`}>
+                          <h4 className={`font-mono text-[10px] uppercase tracking-widest pb-2 border-b font-extrabold ${
+                            theme === 'light' ? 'text-slate-400 border-slate-900/5' : 'text-white/40 border-white/5'
+                          }`}>
                             Tech Specifications
                           </h4>
                           
                           <div className="flex flex-wrap gap-1.5">
                             {activeProjectModal.technologies.map((tech, tIdx) => (
-                              <span key={tIdx} className="px-2 py-1 bg-[#050B14] border border-white/10 text-[10px] text-white font-mono rounded font-bold">
+                              <span key={tIdx} className={`px-2 py-1 border text-[10px] font-mono rounded font-bold transition-colors ${
+                                theme === 'light' ? 'bg-slate-900/5 border-slate-900/10 text-slate-800' : 'bg-[#050B14] border-white/10 text-white'
+                              }`}>
                                 {tech}
                               </span>
                             ))}
                           </div>
 
-                          <div className="flex flex-col gap-3 border-t border-white/5 pt-4 font-mono text-[10px] text-white/40 font-bold">
+                          <div className={`flex flex-col gap-3 border-t pt-4 font-mono text-[10px] font-bold ${
+                            theme === 'light' ? 'border-slate-900/5 text-slate-400' : 'border-white/5 text-white/40'
+                          }`}>
                             <div className="flex justify-between">
                               <span>Status</span>
-                              <span className="text-emerald-400 font-extrabold">Production</span>
+                              <span className="text-emerald-500 font-extrabold">Production</span>
                             </div>
                             <div className="flex justify-between">
                               <span>Licensing</span>
-                              <span className="text-white/80">Apache-2.0</span>
+                              <span className={`transition-colors ${theme === 'light' ? 'text-slate-700' : 'text-white/80'}`}>Apache-2.0</span>
                             </div>
                             <div className="flex justify-between">
                               <span>Integrity</span>
-                              <span className="text-[#38BDF8] font-extrabold">Verified</span>
+                              <span className={`font-extrabold ${theme === 'light' ? 'text-[#0084FF]' : 'text-[#38BDF8]'}`}>Verified</span>
                             </div>
                           </div>
                         </div>

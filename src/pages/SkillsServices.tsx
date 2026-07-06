@@ -214,10 +214,10 @@ export const SkillsServices: React.FC = () => {
                 <button
                   key={cat.value}
                   onClick={() => setActiveCategory(cat.value)}
-                  className={`px-3.5 py-1.5 rounded-full text-[10px] font-extrabold font-mono transition-all duration-300 flex items-center space-x-1.5 shrink-0 cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-full text-[10px] font-extrabold font-mono transition-all duration-300 flex items-center space-x-1.5 shrink-0 cursor-pointer border ${
                     activeCategory === cat.value
-                      ? 'bg-white text-[#050B14]'
-                      : 'text-white/60 hover:text-white hover:bg-white/5'
+                      ? 'bg-white/10 border-[#38BDF8]/30 text-white shadow-sm'
+                      : 'bg-transparent border-transparent text-white/60 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <cat.icon className="w-3.5 h-3.5" />

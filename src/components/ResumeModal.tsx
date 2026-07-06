@@ -4,7 +4,7 @@ import { X, Printer, Download, Mail, Phone, MapPin, Globe, ExternalLink, Award }
 import { usePortfolio } from '../context/PortfolioContext';
 
 export const ResumeModal: React.FC = () => {
-  const { settings, resumeModalOpen, closeResumeModal, skills } = usePortfolio();
+  const { settings, resumeModalOpen, closeResumeModal, skills, theme } = usePortfolio();
   const printAreaRef = useRef<HTMLDivElement>(null);
 
   if (!resumeModalOpen) return null;
@@ -112,22 +112,30 @@ LANGUAGES:
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="relative w-full max-w-4xl bg-[#121212] border border-white/10 rounded-2xl shadow-2xl shadow-black/80 flex flex-col max-h-[90vh] overflow-hidden no-print"
+          className={`relative w-full max-w-4xl border rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden no-print transition-colors duration-300 ${
+            theme === 'light' ? 'bg-slate-50 border-slate-900/10 shadow-slate-900/10' : 'bg-[#121212] border-white/10 shadow-black/80'
+          }`}
         >
           {/* Header Controls */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#1A1A1A]">
+          <div className={`flex items-center justify-between px-6 py-4 border-b transition-colors duration-300 ${
+            theme === 'light' ? 'border-slate-900/10 bg-slate-100' : 'border-white/5 bg-[#1A1A1A]'
+          }`}>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 rounded-full bg-red-500" />
               <span className="w-3 h-3 rounded-full bg-yellow-500" />
               <span className="w-3 h-3 rounded-full bg-green-500" />
-              <span className="text-xs font-mono text-gray-400 ml-2 tracking-wider uppercase">Interactive Document</span>
+              <span className={`text-xs font-mono ml-2 tracking-wider uppercase transition-colors ${
+                theme === 'light' ? 'text-slate-600' : 'text-gray-400'
+              }`}>Interactive Document</span>
             </div>
 
             <div className="flex items-center space-x-3">
               {/* Print Button */}
               <button
                 onClick={handlePrint}
-                className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center space-x-1 text-xs font-mono"
+                className={`p-2 rounded-lg transition-colors flex items-center space-x-1 text-xs font-mono cursor-pointer ${
+                  theme === 'light' ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-900/5' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
                 title="Print Resume"
               >
                 <Printer className="w-4 h-4" />
@@ -137,7 +145,9 @@ LANGUAGES:
               {/* Download Button */}
               <button
                 onClick={handleDownloadMock}
-                className="p-2 text-gray-400 hover:text-cyan-400 hover:bg-white/5 rounded-lg transition-colors flex items-center space-x-1 text-xs font-mono"
+                className={`p-2 rounded-lg transition-colors flex items-center space-x-1 text-xs font-mono cursor-pointer ${
+                  theme === 'light' ? 'text-slate-600 hover:text-[#0084FF] hover:bg-slate-900/5' : 'text-gray-400 hover:text-cyan-400 hover:bg-white/5'
+                }`}
                 title="Download Resume as TXT File"
               >
                 <Download className="w-4 h-4" />
@@ -147,7 +157,9 @@ LANGUAGES:
               {/* Close Button */}
               <button
                 onClick={closeResumeModal}
-                className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-lg transition-colors"
+                className={`p-2 rounded-lg transition-colors cursor-pointer ${
+                  theme === 'light' ? 'text-slate-600 hover:text-red-500 hover:bg-slate-900/5' : 'text-gray-400 hover:text-red-400 hover:bg-white/5'
+                }`}
                 title="Close"
               >
                 <X className="w-5 h-5" />
@@ -156,7 +168,9 @@ LANGUAGES:
           </div>
 
           {/* Resume Body View (Scrollable) */}
-          <div className="flex-1 overflow-y-auto p-6 md:p-10 bg-[#0F0F0F]">
+          <div className={`flex-1 overflow-y-auto p-6 md:p-10 transition-colors duration-300 ${
+            theme === 'light' ? 'bg-slate-100' : 'bg-[#0F0F0F]'
+          }`}>
             
             {/* The Actual Resume Sheet */}
             <div

@@ -51,6 +51,10 @@ interface PortfolioContextProps {
   submitContactMessage: (m: Omit<Message, 'id' | 'createdAt' | 'status'>) => Promise<void>;
   fetchMessages: () => Promise<void>;
   removeMessage: (id: string) => Promise<void>;
+  theme: 'dark' | 'light';
+  toggleTheme: () => void;
+  activeSection: number;
+  setActiveSection: (section: number) => void;
 }
 
 const PortfolioContext = createContext<PortfolioContextProps | undefined>(undefined);
@@ -66,6 +70,34 @@ export const PortfolioProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState(0);
+
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+    }
+    return 'dark'; // Default theme
+  });
+
+  const toggleTheme = () => {
+    setTheme(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', next);
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'light') {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    } else {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    }
+  }, [theme]);
 
   // Open / Close Resume Modal
   const openResumeModal = () => setResumeModalOpen(true);
@@ -303,7 +335,11 @@ export const PortfolioProvider: React.FC<{ children: ReactNode }> = ({ children 
       removeService,
       submitContactMessage,
       fetchMessages,
-      removeMessage
+      removeMessage,
+      theme,
+      toggleTheme,
+      activeSection,
+      setActiveSection
     }}>
       {children}
     </PortfolioContext.Provider>

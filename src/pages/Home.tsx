@@ -52,14 +52,17 @@ const AnimatedCounter: React.FC<{ value: number; suffix?: string }> = ({ value, 
 };
 
 export const Home: React.FC = () => {
-  const { settings, projects, services, loading } = usePortfolio();
+  const { settings, projects, services, loading, activeSection, setActiveSection } = usePortfolio();
   const [showDemo, setShowDemo] = useState(false);
-  const [activeSection, setActiveSection] = useState(0);
   const [scrollDirection, setScrollDirection] = useState<'down' | 'up'>('down');
   
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStart = useRef<number>(0);
   const isTransitioning = useRef<boolean>(false);
+
+  useEffect(() => {
+    setActiveSection(0);
+  }, []);
 
   // 3D Carousel states and configuration
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -1002,10 +1005,10 @@ export const Home: React.FC = () => {
             <motion.div variants={servicesCtaVariants}>
               <Link
                 to="/projects"
-                className="group px-5 py-2.5 rounded-full bg-white text-[#050B14] hover:bg-zinc-100 font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center space-x-2 shadow-lg shadow-white/5 cursor-pointer"
+                className="group px-5 py-2.5 rounded-full bg-white/5 border border-white/10 hover:border-[#38BDF8]/30 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center space-x-2 backdrop-blur-sm cursor-pointer"
               >
                 <span>Browse All Projects</span>
-                <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#38BDF8] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
             </motion.div>
           </div>

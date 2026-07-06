@@ -243,10 +243,10 @@ export const About: React.FC = () => {
                 <button
                   key={filter}
                   onClick={() => setTimelineFilter(filter)}
-                  className={`px-4 py-2 rounded-full font-bold transition-all duration-300 uppercase cursor-pointer ${
+                  className={`px-4 py-2 rounded-full font-bold transition-all duration-300 uppercase cursor-pointer border ${
                     timelineFilter === filter
-                      ? 'bg-white text-[#050B14] shadow-md'
-                      : 'text-white/60 hover:text-white'
+                      ? 'bg-white/10 border-[#38BDF8]/30 text-white shadow-md'
+                      : 'bg-transparent border-transparent text-white/60 hover:text-white'
                   }`}
                 >
                   {filter}

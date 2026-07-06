@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Menu, 
@@ -10,15 +10,32 @@ import {
   User,
   Cpu,
   FolderGit2,
-  Mail
+  Mail,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const Navbar: React.FC = () => {
-  const { settings, user, openResumeModal } = usePortfolio();
+  const { settings, user, openResumeModal, theme, toggleTheme, activeSection } = usePortfolio();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 30) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isNavbarShrunk = scrolled || (location.pathname === '/' && activeSection > 0);
 
   const navLinks = [
     { name: 'Home', path: '/', icon: Home },
@@ -66,16 +83,20 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-[#050B14]/40 border-b border-white/[0.08] backdrop-blur-xl">
+    <header className={`fixed top-0 left-0 right-0 z-50 w-full border-b backdrop-blur-xl transition-all duration-500 ${
+      isNavbarShrunk 
+        ? 'bg-[#050B14]/85 border-white/[0.10] shadow-[0_4px_30px_rgba(0,0,0,0.4)]' 
+        : 'bg-[#050B14]/60 border-white/[0.06]'
+    }`}>
       {/* Navigation Layout - Padding varies from px-6 (mobile) to px-24 (desktop) */}
-      <div className="w-full max-w-7xl mx-auto h-20 flex items-center justify-between px-6 md:px-12 lg:px-24">
+      <div className={`w-full max-w-7xl mx-auto flex items-center justify-between px-6 md:px-12 lg:px-24 transition-all duration-500 ${isNavbarShrunk ? 'h-16' : 'h-20'}`}>
         
         {/* Logo Block: Flex column arrangement */}
         <Link to="/" onClick={closeMobileMenu} className="flex flex-col text-left group">
-          <span className="text-lg md:text-xl font-display font-semibold tracking-wide text-white leading-tight group-hover:text-[#38BDF8] transition-colors duration-300">
+          <span className="text-lg md:text-xl font-display font-semibold tracking-wide leading-tight transition-colors duration-300 text-white group-hover:text-[#38BDF8]">
             {logoMain}
           </span>
-          <span className="text-[10px] md:text-xs font-mono uppercase tracking-widest text-white/50 leading-none mt-0.5 group-hover:text-white/70 transition-colors duration-300">
+          <span className="text-[10px] md:text-xs font-mono uppercase tracking-widest leading-none mt-0.5 transition-colors duration-300 text-white/50 group-hover:text-white/70">
             Information Technology (IT)
           </span>
         </Link>
@@ -85,7 +106,7 @@ export const Navbar: React.FC = () => {
           variants={desktopContainerVariants}
           initial="hidden"
           animate="visible"
-          className="hidden lg:flex items-center bg-white/[0.02] border border-white/[0.08] p-1 rounded-full backdrop-blur-md shadow-inner"
+          className="hidden lg:flex items-center p-1 rounded-full backdrop-blur-md shadow-inner border transition-colors duration-300 bg-white/[0.02] border-white/[0.08]"
         >
           {navLinks.map((link) => {
             const active = isActive(link.path);
@@ -104,11 +125,15 @@ export const Navbar: React.FC = () => {
                   {active && (
                     <motion.span
                       layoutId="activeNavTab"
-                      className="absolute inset-0 bg-white/[0.08] border border-white/[0.12] rounded-full shadow-[0_2px_10px_rgba(255,255,255,0.02)]"
+                      className="absolute inset-0 rounded-full shadow-[0_2px_10px_rgba(255,255,255,0.02)] bg-white/[0.08] border border-white/[0.12]"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
-                  <Icon className={`w-3.5 h-3.5 relative z-10 transition-colors ${active ? 'text-[#38BDF8]' : 'text-white/50'}`} />
+                  <Icon className={`w-3.5 h-3.5 relative z-10 transition-colors ${
+                    active 
+                      ? 'text-[#38BDF8]' 
+                      : 'text-white/50'
+                  }`} />
                   <span className="relative z-10">{link.name}</span>
                 </Link>
               </motion.div>
@@ -123,6 +148,30 @@ export const Navbar: React.FC = () => {
           animate="visible"
           className="hidden lg:flex items-center space-x-4"
         >
+          {/* Theme Toggle Button */}
+          <motion.div variants={desktopItemVariants}>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={toggleTheme}
+              className="p-2.5 rounded-full border border-white/15 bg-white/5 text-white hover:bg-white/10 hover:border-white/25 transition-all flex items-center justify-center w-10 h-10 cursor-pointer shadow-sm relative overflow-hidden"
+              title={theme === 'dark' ? "الوضع النهاري" : "الوضع الليلي"}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={theme}
+                  initial={{ y: -20, opacity: 0, rotate: -90 }}
+                  animate={{ y: 0, opacity: 1, rotate: 0 }}
+                  exit={{ y: 20, opacity: 0, rotate: 90 }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                  className="flex items-center justify-center text-[#38BDF8]"
+                >
+                  {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
+          </motion.div>
+
           {/* View CV Button */}
           <motion.div variants={desktopItemVariants}>
             <motion.button
@@ -153,7 +202,28 @@ export const Navbar: React.FC = () => {
         </motion.div>
 
         {/* Mobile Actions with elegant tap interaction */}
-        <div className="flex lg:hidden items-center space-x-4">
+        <div className="flex lg:hidden items-center space-x-3">
+          {/* Mobile Theme Toggle */}
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            onClick={toggleTheme}
+            className="p-2 rounded-xl border border-white/15 bg-white/5 text-white hover:bg-white/10 transition-all duration-200 cursor-pointer flex items-center justify-center w-10 h-10 shadow-sm"
+            aria-label="Toggle Theme"
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={theme}
+                initial={{ y: -10, opacity: 0, rotate: -45 }}
+                animate={{ y: 0, opacity: 1, rotate: 0 }}
+                exit={{ y: 10, opacity: 0, rotate: 45 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center justify-center text-[#38BDF8]"
+              >
+                {theme === 'dark' ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+              </motion.div>
+            </AnimatePresence>
+          </motion.button>
+
           <motion.button
             whileTap={{ scale: 0.92 }}
             onClick={toggleMobileMenu}
@@ -167,7 +237,7 @@ export const Navbar: React.FC = () => {
                 animate={{ rotate: 0, opacity: 1 }}
                 exit={{ rotate: 45, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center justify-center"
+                className="flex items-center justify-center text-white"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </motion.div>
@@ -185,7 +255,9 @@ export const Navbar: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.99 }}
             transition={{ type: "spring", stiffness: 320, damping: 26 }}
-            className="lg:hidden absolute top-20 left-0 right-0 w-full bg-[#050B14]/92 border-b border-white/10 backdrop-blur-2xl py-6 px-6 z-40 flex flex-col space-y-5 shadow-[0_25px_60px_rgba(0,0,0,0.85)]"
+            className={`lg:hidden absolute left-0 right-0 w-full border-b backdrop-blur-2xl py-6 px-6 z-40 flex flex-col space-y-5 transition-all duration-500 ${
+              isNavbarShrunk ? 'top-16' : 'top-20'
+            } bg-[#050B14]/92 border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)]`}
           >
             <div className="flex flex-col space-y-2">
               {navLinks.map((link, idx) => {
@@ -212,7 +284,9 @@ export const Navbar: React.FC = () => {
                           : 'text-white/70 hover:text-white hover:bg-white/5 border border-transparent'
                       }`}
                     >
-                      <Icon className={`w-4 h-4 ${active ? 'text-[#38BDF8]' : 'text-white/50'}`} />
+                      <Icon className={`w-4 h-4 ${
+                        active ? 'text-[#38BDF8]' : 'text-white/50'
+                      }`} />
                       <span>{link.name}</span>
                     </Link>
                   </motion.div>
@@ -229,7 +303,7 @@ export const Navbar: React.FC = () => {
                 damping: 15,
                 delay: navLinks.length * 0.12 + 0.1
               }}
-              className="pt-4 border-t border-white/10 flex flex-col gap-3"
+              className="pt-4 border-t flex flex-col gap-3 border-white/10"
             >
               {/* Mobile CV Button */}
               <button
@@ -237,7 +311,7 @@ export const Navbar: React.FC = () => {
                   closeMobileMenu();
                   openResumeModal();
                 }}
-                className="w-full py-3 rounded-xl border border-[#38BDF8]/35 bg-[#38BDF8]/8 hover:bg-[#38BDF8]/15 text-[#38BDF8] text-[13px] font-bold uppercase tracking-wider text-center flex items-center justify-center space-x-2 cursor-pointer shadow-[0_4px_15px_rgba(56,189,248,0.05)] active:scale-[0.98] transition-all duration-200"
+                className="w-full py-3 rounded-xl border text-[13px] font-bold uppercase tracking-wider text-center flex items-center justify-center space-x-2 cursor-pointer active:scale-[0.98] transition-all duration-200 border-[#38BDF8]/35 bg-[#38BDF8]/8 hover:bg-[#38BDF8]/15 text-[#38BDF8] shadow-[0_4px_15px_rgba(56,189,248,0.05)]"
               >
                 <FileText className="w-4 h-4" />
                 <span>عرض السيرة الذاتية (CV)</span>
@@ -248,7 +322,7 @@ export const Navbar: React.FC = () => {
                 <Link
                   to="/admin"
                   onClick={closeMobileMenu}
-                  className="w-full py-3 rounded-xl border border-white/15 bg-white/5 text-white text-[13px] font-bold uppercase tracking-wider text-center flex items-center justify-center space-x-2 active:scale-[0.98] transition-all duration-200"
+                  className="w-full py-3 rounded-xl border text-[13px] font-bold uppercase tracking-wider text-center flex items-center justify-center space-x-2 active:scale-[0.98] transition-all duration-200 border-white/15 bg-white/5 text-white hover:bg-white/10"
                 >
                   <LayoutDashboard className="w-4 h-4" />
                   <span>Dashboard</span>
