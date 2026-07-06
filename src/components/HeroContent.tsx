@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, FileText } from 'lucide-react';
+import { usePortfolio } from '../context/PortfolioContext';
 
 interface HeroContentProps {
   subtitleText?: string;
@@ -12,12 +13,14 @@ interface HeroContentProps {
 }
 
 export const HeroContent: React.FC<HeroContentProps> = ({
-  subtitleText = "WE DESIGN EXPERIENCES",
-  headlineText = "YOUR ALL IN ONE",
-  headlineHighlightText = "TECH PARTNER",
-  descriptionText = "We engineer enterprise systems, immersive interfaces, and responsive cloud applications tailored to optimize operations and scale seamless interactions.",
+  subtitleText = "ENGINEERING",
+  headlineText = "THE FUTURE",
+  headlineHighlightText = "OF DIGITAL",
+  descriptionText = "From modern web platforms to enterprise software and AI automation, we build scalable digital products designed for performance and long-term growth.",
   onWatchDemo
 }) => {
+  const { openResumeModal } = usePortfolio();
+
   return (
     <div className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-6 mt-12 md:mt-16 lg:mt-20">
       
@@ -73,17 +76,16 @@ export const HeroContent: React.FC<HeroContentProps> = ({
           </div>
         </Link>
 
-        {/* Watch Demo Trigger */}
+        {/* "View CV" Button */}
         <button
-          onClick={onWatchDemo}
-          className="group flex items-center space-x-3 text-white/95 hover:text-white transition-colors duration-300"
+          onClick={openResumeModal}
+          className="group relative flex items-center space-x-4 text-white text-[13px] font-sans font-bold uppercase tracking-wider pl-6 pr-2 py-2 rounded-full border border-[#38BDF8]/40 bg-[#38BDF8]/5 hover:bg-[#38BDF8]/10 backdrop-blur-sm transition-all duration-300 cursor-pointer"
         >
-          <div className="w-9 h-9 rounded-full bg-white/10 group-hover:bg-white/20 border border-white/10 flex items-center justify-center transition-colors">
-            <Play className="w-3.5 h-3.5 fill-white text-white translate-x-0.5" />
+          <span>عرض السيرة الذاتية (CV)</span>
+          {/* Circular icon wrapper */}
+          <div className="w-8 h-8 rounded-full border border-[#38BDF8]/30 flex items-center justify-center bg-transparent group-hover:bg-[#38BDF8] transition-all duration-300">
+            <FileText className="w-4 h-4 text-[#38BDF8] group-hover:text-[#050B14] transition-colors duration-300" />
           </div>
-          <span className="font-sans font-bold text-[13px] uppercase tracking-wider">
-            Watch Demo
-          </span>
         </button>
       </motion.div>
 

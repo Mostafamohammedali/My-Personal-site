@@ -91,7 +91,7 @@ export const About: React.FC = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
     }
   };
 
@@ -109,191 +109,210 @@ export const About: React.FC = () => {
   const careerGoals = settings?.careerGoals || "My goal is to construct high-performance distributed systems...";
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      className="pt-28 pb-20 px-6 sm:px-12 lg:px-24 max-w-7xl mx-auto flex flex-col gap-16 sm:gap-24 relative z-10 text-white"
-    >
-      {/* HEADER SECTION */}
-      <motion.div variants={itemVariants} className="text-left flex flex-col gap-3 border-b border-white/10 pb-8">
-        <span className="text-xs font-mono uppercase text-[#38BDF8] tracking-[0.2em] font-extrabold">BIOGRAPHY</span>
-        <h1 className="text-4xl font-display font-bold tracking-tight text-white">About Me</h1>
-        <p className="text-white/70 text-lg max-w-2xl leading-relaxed mt-2 font-sans">
-          Discover my background, education history, and professional development path.
-        </p>
-      </motion.div>
+    <div className="relative min-h-screen w-full bg-transparent text-white overflow-x-hidden font-sans">
+      {/* Delicate background grid */}
+      <div className="absolute inset-0 grid-lines pointer-events-none opacity-20 -z-10" />
 
-      {/* TWO-COLUMN PROFILE & BIO CARDS */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Left Column: Who I Am & Fast Stats */}
-        <motion.div variants={itemVariants} className="lg:col-span-1 flex flex-col gap-6">
-          <div className="p-8 glass-panel rounded-2xl flex flex-col gap-6 border border-white/10">
-            <h3 className="text-lg font-display font-bold text-white">Quick Identity</h3>
-            
-            <div className="flex flex-col gap-4 font-sans text-sm">
-              <div className="flex items-center space-x-3 text-white/80">
-                <Compass className="w-5 h-5 text-[#38BDF8] shrink-0" />
-                <div>
-                  <p className="text-[10px] font-mono uppercase text-white/50 tracking-wider font-bold">Title</p>
-                  <p className="text-white font-semibold">{settings?.title || "Principal Architect"}</p>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="pt-32 pb-24 px-6 sm:px-12 lg:px-24 max-w-7xl mx-auto flex flex-col gap-24 relative z-10"
+      >
+        {/* HEADER SECTION */}
+        <motion.div variants={itemVariants} className="text-left flex flex-col gap-3 border-b border-white/10 pb-8">
+          <div className="flex items-center space-x-2.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
+            <span className="text-[11px] font-mono uppercase text-[#38BDF8] tracking-[0.25em] font-extrabold">
+              [ PROFILE BIOGRAPHY ]
+            </span>
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-display font-medium tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-100 to-zinc-400">
+            About Me
+          </h1>
+          <p className="text-white/60 text-base max-w-2xl mt-1 leading-relaxed">
+            Discover my background, education history, and professional development path as an IT specialist.
+          </p>
+        </motion.div>
+
+        {/* TWO-COLUMN PROFILE & BIO CARDS */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left Column: Who I Am & Fast Stats */}
+          <motion.div variants={itemVariants} className="lg:col-span-1 flex flex-col gap-6">
+            <div className="p-8 glass-panel rounded-2xl flex flex-col gap-6 border border-white/5 hover:border-white/15 transition-all duration-300 relative overflow-hidden card-shine">
+              <h3 className="text-lg font-display font-bold text-white">Quick Identity</h3>
+              
+              <div className="flex flex-col gap-4 text-sm">
+                <div className="flex items-center space-x-3.5 text-white/80">
+                  <Compass className="w-5 h-5 text-[#38BDF8] shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-mono uppercase text-white/40 tracking-wider font-bold">Title</p>
+                    <p className="text-white font-semibold mt-0.5">{settings?.title || "Principal Architect"}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-center space-x-3 text-white/80 border-t border-white/10 pt-3.5">
-                <Flag className="w-5 h-5 text-[#38BDF8] shrink-0" />
-                <div>
-                  <p className="text-[10px] font-mono uppercase text-white/50 tracking-wider font-bold">Country</p>
-                  <p className="text-white font-semibold">{country}</p>
+                <div className="flex items-center space-x-3.5 text-white/80 border-t border-white/5 pt-3.5">
+                  <Flag className="w-5 h-5 text-[#38BDF8] shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-mono uppercase text-white/40 tracking-wider font-bold">Country</p>
+                    <p className="text-white font-semibold mt-0.5">{country}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-center space-x-3 text-white/80 border-t border-white/10 pt-3.5">
-                <MapPin className="w-5 h-5 text-[#38BDF8] shrink-0" />
-                <div>
-                  <p className="text-[10px] font-mono uppercase text-white/50 tracking-wider font-bold">Location</p>
-                  <p className="text-white font-semibold">{location}</p>
+                <div className="flex items-center space-x-3.5 text-white/80 border-t border-white/5 pt-3.5">
+                  <MapPin className="w-5 h-5 text-[#38BDF8] shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-mono uppercase text-white/40 tracking-wider font-bold">Location</p>
+                    <p className="text-white font-semibold mt-0.5">{location}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-center space-x-3 text-white/80 border-t border-white/10 pt-3.5">
-                <Target className="w-5 h-5 text-[#38BDF8] shrink-0" />
-                <div>
-                  <p className="text-[10px] font-mono uppercase text-white/50 tracking-wider font-bold">Specialties</p>
-                  <p className="text-white font-semibold">Node, Cloud, React, Postgres</p>
+                <div className="flex items-center space-x-3.5 text-white/80 border-t border-white/5 pt-3.5">
+                  <Target className="w-5 h-5 text-[#38BDF8] shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-mono uppercase text-white/40 tracking-wider font-bold">Specialties</p>
+                    <p className="text-white font-semibold mt-0.5">Node, Cloud, React, Postgres</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="p-8 glass-panel rounded-2xl flex flex-col gap-4 border border-white/10">
-            <h3 className="text-lg font-display font-bold text-white flex items-center gap-2">
-              <Award className="w-5 h-5 text-[#38BDF8]" />
-              <span>Certifications</span>
-            </h3>
-            <ul className="text-left text-sm text-white/80 font-sans space-y-3">
-              <li className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] shrink-0 mt-2" />
-                <span>Google Professional Cloud Architect</span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] shrink-0 mt-2" />
-                <span>AWS Solutions Architect (Professional)</span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] shrink-0 mt-2" />
-                <span>Certified Kubernetes Administrator (CKA)</span>
-              </li>
-            </ul>
-          </div>
-        </motion.div>
+            <div className="p-8 glass-panel rounded-2xl flex flex-col gap-4 border border-white/5 hover:border-white/15 transition-all duration-300">
+              <h3 className="text-lg font-display font-bold text-white flex items-center gap-2.5">
+                <Award className="w-5 h-5 text-[#38BDF8]" />
+                <span>Certifications</span>
+              </h3>
+              <ul className="text-left text-sm text-white/70 space-y-3 mt-1 font-medium">
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] shrink-0 mt-2" />
+                  <span>Google Professional Cloud Architect</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] shrink-0 mt-2" />
+                  <span>AWS Solutions Architect (Professional)</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] shrink-0 mt-2" />
+                  <span>Certified Kubernetes Administrator (CKA)</span>
+                </li>
+              </ul>
+            </div>
+          </motion.div>
 
-        {/* Right Column: Bio & Long Goals */}
-        <motion.div variants={itemVariants} className="lg:col-span-2 flex flex-col gap-6 text-left">
-          <div className="p-8 md:p-10 glass-panel rounded-2xl flex flex-col gap-6 border border-white/10">
-            <h2 className="text-2xl font-display font-bold text-white tracking-tight">Who I Am & Biography</h2>
-            <p className="text-white/80 text-base leading-relaxed whitespace-pre-line font-sans">
-              {bio}
-            </p>
-          </div>
+          {/* Right Column: Bio & Long Goals */}
+          <motion.div variants={itemVariants} className="lg:col-span-2 flex flex-col gap-6 text-left">
+            <div className="p-8 md:p-10 glass-panel rounded-2xl flex flex-col gap-6 border border-white/5 hover:border-white/15 transition-all duration-300 card-shine">
+              <h2 className="text-2xl font-display font-bold text-white tracking-tight">Who I Am & Biography</h2>
+              <p className="text-white/70 text-base leading-relaxed whitespace-pre-line font-normal">
+                {bio}
+              </p>
+            </div>
 
-          <div className="p-8 md:p-10 glass-panel rounded-2xl flex flex-col gap-4 text-left border border-white/10">
-            <h3 className="text-xl font-display font-bold text-white flex items-center gap-2">
-              <Target className="w-5 h-5 text-[#38BDF8]" />
-              <span>Career Goals & Professional Core</span>
-            </h3>
-            <p className="text-white/80 text-sm leading-relaxed italic font-sans bg-white/5 p-4 rounded-xl border border-white/10">
-              "{careerGoals}"
-            </p>
-          </div>
-        </motion.div>
+            <div className="p-8 md:p-10 glass-panel rounded-2xl flex flex-col gap-4 text-left border border-white/5 hover:border-white/15 transition-all duration-300">
+              <h3 className="text-lg font-display font-bold text-white flex items-center gap-2.5">
+                <Target className="w-5 h-5 text-[#38BDF8]" />
+                <span>Career Goals & Professional Core</span>
+              </h3>
+              <p className="text-white/80 text-sm leading-relaxed italic bg-white/[0.02] p-5 rounded-xl border border-white/5 font-medium">
+                "{careerGoals}"
+              </p>
+            </div>
+          </motion.div>
 
-      </div>
+        </div>
 
-      {/* INTERACTIVE TIMELINE SECTION */}
-      <section id="timeline-section" className="flex flex-col gap-10">
-        <motion.div variants={itemVariants} className="text-left flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-6">
-          <div>
-            <span className="text-xs font-mono uppercase text-[#38BDF8] tracking-[0.2em] font-extrabold">CHRONOLOGY</span>
-            <h2 className="text-2xl sm:text-3xl font-display font-bold tracking-tight text-white mt-1">Timeline Progression</h2>
-          </div>
+        {/* INTERACTIVE TIMELINE SECTION */}
+        <section id="timeline-section" className="flex flex-col gap-12 relative">
+          <div className="absolute top-1/2 left-0 w-80 h-80 rounded-full bg-[#38BDF8]/5 blur-[100px] pointer-events-none -z-10" />
 
-          {/* Interactive Filters */}
-          <div className="flex bg-white/5 border border-white/10 p-1 rounded-full text-xs font-mono backdrop-blur-md">
-            {(['all', 'career', 'education'] as const).map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setTimelineFilter(filter)}
-                className={`px-4 py-2 rounded-full font-bold transition-all duration-300 uppercase cursor-pointer ${
-                  timelineFilter === filter
-                    ? 'bg-white text-[#050B14] shadow-md'
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Timeline Line Graphic with white/10 */}
-        <div className="relative border-l-2 border-white/10 ml-4 md:ml-40 flex flex-col gap-10 py-4 text-left">
-          
-          {filteredEvents.map((event, idx) => (
-            <motion.div
-              key={idx}
-              variants={itemVariants}
-              className="relative pl-8 md:pl-12 group"
-            >
-              {/* Bullet Node */}
-              <div className="absolute -left-3.5 top-1 w-6 h-6 rounded-full bg-[#050B14] border-2 border-white/10 group-hover:border-[#38BDF8] flex items-center justify-center transition-colors duration-300 shadow-sm">
-                {event.type === 'career' ? (
-                  <Briefcase className="w-3 h-3 text-[#38BDF8]" />
-                ) : (
-                  <GraduationCap className="w-3.5 h-3.5 text-[#38BDF8]" />
-                )}
-              </div>
-
-              {/* Float Year Indicator Left on Desktop */}
-              <div className="hidden md:block absolute -left-40 top-1.5 w-32 text-right font-mono text-xs font-bold text-white/40 uppercase tracking-widest">
-                {event.year}
-              </div>
-
-              {/* Event Card */}
-              <div className="p-6 md:p-8 glass-panel rounded-2xl group-hover:border-white/25 hover:shadow-[0_8px_30px_rgba(0,132,255,0.12)] transition-all duration-300 border border-white/10">
-                <span className="block md:hidden font-mono text-[10px] text-[#38BDF8] font-bold uppercase tracking-wider mb-2">
-                  {event.year}
+          <motion.div variants={itemVariants} className="text-left flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-6">
+            <div>
+              <div className="flex items-center space-x-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
+                <span className="text-[11px] font-mono uppercase text-[#38BDF8] tracking-[0.25em] font-extrabold">
+                  [ CHRONOLOGY ]
                 </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-display font-medium tracking-tight text-white mt-1">Timeline Progression</h2>
+            </div>
 
-                <div className="flex flex-col sm:flex-row justify-between items-start gap-1">
-                  <div>
-                    <h3 className="text-lg font-display font-bold text-white tracking-tight">{event.title}</h3>
-                    <p className="font-mono text-xs text-white/50 mt-1 font-semibold">{event.subtitle}</p>
-                  </div>
-                  <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold tracking-wider uppercase mt-1 sm:mt-0 ${
-                    event.type === 'career'
-                      ? 'bg-white/5 text-[#38BDF8] border border-white/10'
-                      : 'bg-white/5 text-emerald-400 border border-white/10'
-                  }`}>
-                    {event.type}
-                  </span>
+            {/* Interactive Filters */}
+            <div className="flex bg-white/5 border border-white/10 p-1 rounded-full text-xs font-mono backdrop-blur-md">
+              {(['all', 'career', 'education'] as const).map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setTimelineFilter(filter)}
+                  className={`px-4 py-2 rounded-full font-bold transition-all duration-300 uppercase cursor-pointer ${
+                    timelineFilter === filter
+                      ? 'bg-white text-[#050B14] shadow-md'
+                      : 'text-white/60 hover:text-white'
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Timeline Line Graphic with white/10 */}
+          <div className="relative border-l border-white/10 ml-4 md:ml-40 flex flex-col gap-10 py-4 text-left">
+            
+            {filteredEvents.map((event, idx) => (
+              <motion.div
+                key={idx}
+                variants={itemVariants}
+                className="relative pl-8 md:pl-12 group"
+              >
+                {/* Bullet Node */}
+                <div className="absolute -left-3 top-1 w-[22px] h-[22px] rounded-full bg-[#050B14] border-2 border-white/15 group-hover:border-[#38BDF8] flex items-center justify-center transition-colors duration-300 shadow-sm z-10">
+                  {event.type === 'career' ? (
+                    <Briefcase className="w-2.5 h-2.5 text-[#38BDF8]" />
+                  ) : (
+                    <GraduationCap className="w-3 h-3 text-[#38BDF8]" />
+                  )}
                 </div>
 
-                <p className="text-white/70 text-sm mt-4 leading-relaxed font-sans">{event.description}</p>
-                
-                {event.bullets && event.bullets.length > 0 && (
-                  <ul className="list-disc list-outside pl-4 mt-4 text-xs text-white/50 space-y-1.5 font-sans">
-                    {event.bullets.map((bullet, bIdx) => (
-                      <li key={bIdx}>{bullet}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-    </motion.div>
+                {/* Float Year Indicator Left on Desktop */}
+                <div className="hidden md:block absolute -left-40 top-1.5 w-32 text-right font-mono text-[11px] font-bold text-white/30 uppercase tracking-widest group-hover:text-[#38BDF8] transition-colors duration-300">
+                  {event.year}
+                </div>
+
+                {/* Event Card */}
+                <div className="p-6 md:p-8 glass-panel rounded-2xl group-hover:border-white/15 hover:shadow-[0_8px_30px_rgba(56,189,248,0.05)] transition-all duration-300 border border-white/5 card-shine">
+                  <span className="block md:hidden font-mono text-[10px] text-[#38BDF8] font-bold uppercase tracking-wider mb-2">
+                    {event.year}
+                  </span>
+
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-1">
+                    <div>
+                      <h3 className="text-lg font-display font-bold text-white tracking-tight">{event.title}</h3>
+                      <p className="font-mono text-[11px] text-[#38BDF8] mt-1 font-semibold">{event.subtitle}</p>
+                    </div>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold tracking-wider uppercase mt-1 sm:mt-0 ${
+                      event.type === 'career'
+                        ? 'bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/20'
+                        : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                    }`}>
+                      {event.type}
+                    </span>
+                  </div>
+
+                  <p className="text-white/60 text-sm mt-4 leading-relaxed font-sans">{event.description}</p>
+                  
+                  {event.bullets && event.bullets.length > 0 && (
+                    <ul className="list-disc list-outside pl-4 mt-4 text-xs text-white/40 space-y-1.5 font-sans font-medium">
+                      {event.bullets.map((bullet, bIdx) => (
+                        <li key={bIdx} className="hover:text-white/60 transition-colors">{bullet}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      </motion.div>
+    </div>
   );
 };

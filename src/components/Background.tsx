@@ -1,14 +1,31 @@
 import React, { useEffect, useRef } from 'react';
 
-interface Particle {
+interface Fiber {
+  startX: number;
+  amplitude: number;
+  frequency: number;
+  phase: number;
+  phaseSpeed: number;
+  curvature: number; // general sweeping curve factor
+  thickness: number;
+  color: string;
+  glowColor: string;
+  particles: {
+    y: number;
+    speed: number;
+    size: number;
+    alpha: number;
+  }[];
+}
+
+interface AmbientParticle {
   x: number;
   y: number;
   size: number;
-  speedX: number;
   speedY: number;
-  opacity: number;
+  speedX: number;
+  alpha: number;
   color: string;
-  depth: number;
 }
 
 export const Background: React.FC = () => {
@@ -24,6 +41,7 @@ export const Background: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Handle high DPI displays for crisp rendering
     const resizeCanvas = () => {
       const rect = container.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
@@ -53,26 +71,62 @@ export const Background: React.FC = () => {
     window.addEventListener('mousemove', handleMouseMove);
     container.addEventListener('mouseleave', handleMouseLeave);
 
-    // Initialize premium floating nodes/particles
-    const particles: Particle[] = [];
-    const particleCount = 45;
-    const colors = [
-      'rgba(0, 132, 255, 0.15)',   // Electric Blue
-      'rgba(56, 189, 248, 0.15)',  // Soft Cyan
-      'rgba(147, 51, 234, 0.12)'   // Deep Purple
-    ];
+    // Initialize Fiber Optic Strands to match the beautiful video
+    const fibers: Fiber[] = [];
+    const fiberCount = 40;
 
-    for (let i = 0; i < particleCount; i++) {
-      const depth = Math.random() * 3 + 1;
-      particles.push({
+    // Helper to generate a random blue shade matching the video
+    const getRandomBlue = (opacity: number) => {
+      const shades = [
+        `rgba(0, 132, 255, ${opacity})`,  // Electric Blue
+        `rgba(56, 189, 248, ${opacity})`, // Cyan / Soft Blue
+        `rgba(2, 60, 240, ${opacity})`,   // Deep Royal Blue
+        `rgba(14, 165, 233, ${opacity})`  // Sky Blue
+      ];
+      return shades[Math.floor(Math.random() * shades.length)];
+    };
+
+    for (let i = 0; i < fiberCount; i++) {
+      // Position start points mostly in a sweeping curve from bottom-left towards center-right
+      const startX = (i / fiberCount) * window.innerWidth * 1.2 - (window.innerWidth * 0.1);
+      
+      const particlesList = [];
+      const particleCount = Math.floor(Math.random() * 2) + 1; // 1-2 glowing light pulses per fiber
+      for (let p = 0; p < particleCount; p++) {
+        particlesList.push({
+          y: Math.random() * window.innerHeight,
+          speed: Math.random() * 1.2 + 0.6,
+          size: Math.random() * 2.2 + 1.2,
+          alpha: Math.random() * 0.5 + 0.5
+        });
+      }
+
+      fibers.push({
+        startX,
+        amplitude: Math.random() * 45 + 15,
+        frequency: Math.random() * 0.003 + 0.0015,
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: Math.random() * 0.015 + 0.005,
+        curvature: (Math.random() * 180 + 80) * (Math.random() > 0.5 ? 1 : -1), // Curved sweeping paths
+        thickness: Math.random() * 1.5 + 0.5,
+        color: getRandomBlue(Math.random() * 0.15 + 0.08),
+        glowColor: getRandomBlue(1),
+        particles: particlesList
+      });
+    }
+
+    // Ambient floating light bokeh circles
+    const ambientParticles: AmbientParticle[] = [];
+    const ambientCount = 35;
+    for (let i = 0; i < ambientCount; i++) {
+      ambientParticles.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        size: (Math.random() * 1.5 + 0.5) * (depth * 0.45),
-        speedX: (Math.random() - 0.5) * (0.2 / depth),
-        speedY: (Math.random() - 0.5) * (0.2 / depth),
-        opacity: Math.random() * 0.4 + 0.1,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        depth
+        size: Math.random() * 4 + 1.5,
+        speedY: -(Math.random() * 0.4 + 0.15), // drift upwards
+        speedX: (Math.random() - 0.5) * 0.15,
+        alpha: Math.random() * 0.4 + 0.1,
+        color: getRandomBlue(1)
       });
     }
 
@@ -83,75 +137,146 @@ export const Background: React.FC = () => {
       const width = rect.width;
       const height = rect.height;
 
-      ctx.clearRect(0, 0, width, height);
+      // Clear with absolute pure black & dark royal gradient to match the cinematic video
+      const bgGradient = ctx.createRadialGradient(width * 0.6, height * 0.7, 0, width * 0.5, height * 0.5, width * 0.9);
+      bgGradient.addColorStop(0, '#021026'); // Deep dark blue spotlight
+      bgGradient.addColorStop(0.5, '#010611'); // Darkest indigo
+      bgGradient.addColorStop(1, '#000205'); // Absolute deep black corners
+      ctx.fillStyle = bgGradient;
+      ctx.fillRect(0, 0, width, height);
 
-      // Interpolate mouse
+      // Interpolate mouse coordinates smoothly
       const mouse = mouseRef.current;
-      mouse.x += (mouse.targetX - mouse.x) * 0.08;
-      mouse.y += (mouse.targetY - mouse.y) * 0.08;
+      mouse.x += (mouse.targetX - mouse.x) * 0.06;
+      mouse.y += (mouse.targetY - mouse.y) * 0.06;
 
-      // Render interactive cursor glow on the canvas
+      // Render interactive mouse glow
       if (mouse.x > -500 && mouse.y > -500) {
-        const cursorGlow = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 200);
-        cursorGlow.addColorStop(0, 'rgba(0, 132, 255, 0.04)');
-        cursorGlow.addColorStop(0.5, 'rgba(56, 189, 248, 0.015)');
+        const cursorGlow = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 160);
+        cursorGlow.addColorStop(0, 'rgba(56, 189, 248, 0.05)');
+        cursorGlow.addColorStop(0.5, 'rgba(0, 132, 255, 0.02)');
         cursorGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = cursorGlow;
         ctx.fillRect(0, 0, width, height);
       }
 
-      // Draw premium interactive particles
-      particles.forEach((p) => {
-        p.x += p.speedX;
-        p.y += p.speedY;
+      // 1. Draw Ambient Floating Bokeh Circles
+      ambientParticles.forEach((ap) => {
+        ap.y += ap.speedY;
+        ap.x += ap.speedX;
 
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-
-        // Interactive mouse push
-        if (mouse.x > -500 && mouse.y > -500) {
-          const dx = mouse.x - p.x;
-          const dy = mouse.y - p.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          
-          if (dist < 180) {
-            const force = (180 - dist) / 180 * 0.12;
-            p.x -= (dx / dist) * force * p.depth;
-            p.y -= (dy / dist) * force * p.depth;
-          }
+        // Reset if floats off the top
+        if (ap.y < -10) {
+          ap.y = height + 10;
+          ap.x = Math.random() * width;
         }
+        if (ap.x < -10) ap.x = width + 10;
+        if (ap.x > width + 10) ap.x = -10;
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.opacity;
+        ctx.arc(ap.x, ap.y, ap.size, 0, Math.PI * 2);
+        ctx.fillStyle = ap.color;
+        ctx.globalAlpha = ap.alpha;
         ctx.fill();
         ctx.globalAlpha = 1.0;
       });
 
-      // Subtle networking interconnections
-      ctx.strokeStyle = 'rgba(0, 132, 255, 0.01)';
-      ctx.lineWidth = 0.5;
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const p1 = particles[i];
-          const p2 = particles[j];
-          const dx = p1.x - p2.x;
-          const dy = p1.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+      // 2. Draw Waving Fiber Optic Strands
+      fibers.forEach((f) => {
+        f.phase += f.phaseSpeed; // animate waves
 
-          if (dist < 90) {
-            const alpha = (90 - dist) / 90 * 0.15;
-            ctx.strokeStyle = `rgba(0, 132, 255, ${alpha * 0.08})`;
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
+        ctx.beginPath();
+        ctx.lineWidth = f.thickness;
+        ctx.strokeStyle = f.color;
+
+        // Draw curved lines by plotting points vertically
+        const step = 15;
+        let first = true;
+
+        for (let y = height + 10; y >= -10; y -= step) {
+          // Curvature + Sine wave offset
+          const progress = (height - y) / height; // 0 at bottom, 1 at top
+          
+          // Wave distortion
+          let xOffset = Math.sin(y * f.frequency + f.phase) * f.amplitude;
+          
+          // Sweeping natural curve path
+          xOffset += Math.sin(progress * Math.PI) * f.curvature;
+
+          // Add a tiny bit of magnetic mouse attraction to the fibers
+          if (mouse.x > -500 && mouse.y > -500) {
+            const currentX = f.startX + xOffset;
+            const dx = mouse.x - currentX;
+            const dy = mouse.y - y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 200) {
+              const force = (200 - dist) / 200 * 20; // pull up to 20px
+              xOffset += (dx / dist) * force;
+            }
+          }
+
+          const drawX = f.startX + xOffset;
+
+          if (first) {
+            ctx.moveTo(drawX, y);
+            first = false;
+          } else {
+            ctx.lineTo(drawX, y);
           }
         }
-      }
+        ctx.stroke();
+
+        // 3. Draw Fiber Optic Signal Pulses (Glowing Tips/Lights traveling along the strands)
+        f.particles.forEach((p) => {
+          p.y -= p.speed; // move upward
+
+          // Reset when reaching top
+          if (p.y < -10) {
+            p.y = height + 10;
+            p.speed = Math.random() * 1.2 + 0.6;
+          }
+
+          // Compute exact X coordinate on the waving line at the current Y
+          const progress = (height - p.y) / height;
+          let pXOffset = Math.sin(p.y * f.frequency + f.phase) * f.amplitude;
+          pXOffset += Math.sin(progress * Math.PI) * f.curvature;
+
+          // Mouse influence at particle coordinate
+          if (mouse.x > -500 && mouse.y > -500) {
+            const currentX = f.startX + pXOffset;
+            const dx = mouse.x - currentX;
+            const dy = mouse.y - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 200) {
+              const force = (200 - dist) / 200 * 20;
+              pXOffset += (dx / dist) * force;
+            }
+          }
+
+          const particleX = f.startX + pXOffset;
+
+          // Glowing effect for fiber optic tips
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(particleX, p.y, p.size, 0, Math.PI * 2);
+          
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = f.glowColor;
+          ctx.fillStyle = '#ffffff'; // White center for extreme brightness
+          ctx.globalAlpha = p.alpha;
+          ctx.fill();
+          
+          // Outer glow ring
+          ctx.beginPath();
+          ctx.arc(particleX, p.y, p.size * 2, 0, Math.PI * 2);
+          ctx.shadowBlur = 0; // disable shadow for clean performance
+          ctx.fillStyle = f.glowColor;
+          ctx.globalAlpha = p.alpha * 0.35;
+          ctx.fill();
+
+          ctx.restore();
+        });
+      });
 
       animationFrameId = requestAnimationFrame(render);
     };
@@ -167,41 +292,17 @@ export const Background: React.FC = () => {
   }, []);
 
   return (
-    <div id="interactive-background" ref={containerRef} className="fixed inset-0 -z-50 w-full h-full overflow-hidden select-none bg-[#050B14]">
-      {/* Layer 1: Background Video */}
-      <video
-        src="https://strvid.nyc3.cdn.digitaloceanspaces.com/motionsite/hero_cloud_animation_video.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-      />
-
-      {/* Layer 2: Video Dimming Overlay */}
-      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
-
-      {/* Layer 3: Foreground Overlay Image */}
-      <div 
-        className="absolute bottom-0 left-0 right-0 w-full h-[80vh] bg-cover bg-bottom pointer-events-none opacity-40 mix-blend-screen"
-        style={{
-          backgroundImage: `url('https://strvid.nyc3.cdn.digitaloceanspaces.com/motionsite/hero_foreground_bg.png')`
-        }}
-      />
-
-      {/* Layer 4: Bottom Vignette */}
-      <div className="absolute bottom-0 left-0 right-0 h-[60vh] bg-gradient-to-t from-[#02122c] via-[#02122c]/80 to-transparent pointer-events-none" />
-
-      {/* Layer 5: Top Vignette */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'linear-gradient(to bottom, #02122cff 0%, #02122cfa 10%, #02122c80 25%, transparent 50%)'
-        }}
-      />
-
-      {/* Layer 6: UI Interactive Particle Canvas */}
+    <div 
+      id="interactive-background" 
+      ref={containerRef} 
+      className="fixed inset-0 -z-50 w-full h-full overflow-hidden select-none bg-[#010611]"
+    >
+      {/* Background Interactive Fiber Optics Layer */}
       <canvas ref={canvasRef} className="absolute inset-0 block w-full h-full pointer-events-none" />
+
+      {/* Cinematic Overlays to blend with the portfolio perfectly */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#010611] via-transparent to-[#010611]/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-radial-gradient-vignette pointer-events-none" />
     </div>
   );
 };

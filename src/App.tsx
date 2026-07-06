@@ -5,11 +5,13 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { motion, useScroll, useSpring } from 'motion/react';
 import { PortfolioProvider } from './context/PortfolioContext';
 import { Background } from './components/Background';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ResumeModal } from './components/ResumeModal';
+import { CustomCursor } from './components/CustomCursor';
 
 // Pages
 import { Home } from './pages/Home';
@@ -24,9 +26,29 @@ import { AdminDashboard } from './pages/AdminDashboard';
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isHomeRoute = location.pathname === '/';
+  
+  // High-performance Framer Motion scroll progress indicator
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   return (
-    <div className="relative min-h-screen flex flex-col text-white bg-[#050B14] font-sans selection:bg-white/20 selection:text-[#38BDF8]">
+    <div className="relative min-h-screen flex flex-col text-white bg-transparent font-sans selection:bg-white/20 selection:text-[#38BDF8]">
+      {/* Premium Custom Mouse Cursor */}
+      <CustomCursor />
+
+      {/* Top Scroll Progress Bar */}
+      {!isAdminRoute && (
+        <motion.div 
+          className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#0084FF] via-[#38BDF8] to-cyan-300 origin-left z-[100]" 
+          style={{ scaleX }} 
+        />
+      )}
+
       {/* Dynamic Ambient Background */}
       <Background />
 
@@ -46,8 +68,8 @@ const AppContent: React.FC = () => {
         </Routes>
       </main>
 
-      {/* Conditional Footer (Hiding on Admin Workspaces) */}
-      {!isAdminRoute && <Footer />}
+      {/* Conditional Footer (Hiding on Admin Workspaces and Home page) */}
+      {!isAdminRoute && !isHomeRoute && <Footer />}
 
       {/* Floating Resume Interactive Document Overlay */}
       <ResumeModal />
